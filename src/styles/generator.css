@@ -346,7 +346,7 @@
   line-height: 1.4;
 }
 
-/* QR Loading */
+/* QR Loading - Simplified */
 .qr-loading {
   display: flex;
   flex-direction: column;
@@ -367,10 +367,10 @@
 }
 
 .qr-loading .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid #f3f4f6;
-  border-top: 3px solid #3b82f6;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #f3f4f6;
+  border-top: 2px solid #3b82f6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

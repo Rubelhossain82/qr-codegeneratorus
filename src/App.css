@@ -5173,7 +5173,7 @@ span.logo-preview-text {
   }
 }
 
-/* Auth Loading */
+/* Auth Loading - Simplified */
 .auth-loading {
   min-height: 100vh;
   display: flex;
@@ -6319,7 +6319,7 @@ span.logo-preview-text {
   transform: scale(0.95);
 }
 
-/* Loading spinner variations */
+/* Loading spinner variations - Simplified */
 .loading-spinner.small {
   width: 20px;
   height: 20px;
@@ -6327,17 +6327,9 @@ span.logo-preview-text {
 }
 
 .loading-spinner.large {
-  width: 40px;
-  height: 40px;
-  border-width: 3px;
-}
-
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 2rem;
+  width: 32px;
+  height: 32px;
+  border-width: 2px;
 }
 
 /* Mobile Authentication Styles */
@@ -6714,12 +6706,12 @@ span.logo-preview-text {
   font-size: 0.85rem;
 }
 
-/* Loading Spinner */
+/* Loading Spinner - Consolidated */
 .loading-spinner {
   width: 20px;
   height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
+  border-top: 2px solid #00d4ff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -6731,19 +6723,9 @@ span.logo-preview-text {
 }
 
 .loading-spinner.large {
-  width: 40px;
-  height: 40px;
-  border-width: 3px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+  width: 32px;
+  height: 32px;
+  border-width: 2px;
 }
 
 /* Search and Filter Controls */
@@ -7510,7 +7492,7 @@ span.logo-preview-text {
   font-size: 0.9rem;
 }
 
-/* Loading States */
+/* Loading States - Simplified */
 .users-loading,
 .advertisements-loading,
 .settings-loading,
@@ -7519,7 +7501,7 @@ span.logo-preview-text {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 2rem;
   color: rgba(255, 255, 255, 0.7);
 }
 
