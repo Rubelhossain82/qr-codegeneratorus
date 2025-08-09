@@ -123,28 +123,35 @@ function DigitalSignatureGenerator() {
   }
 
   const downloadQR = () => {
+    // Check if user is logged in
+    if (!user) {
+      toast.error('Please login to download QR codes')
+      window.location.href = '/login'
+      return
+    }
+
     const svg = qrRef.current.querySelector('svg')
     const svgData = new XMLSerializer().serializeToString(svg)
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-    const img = new Image()
-    
+    const img = document.createElement('img')
+
     canvas.width = qrSettings.size
     canvas.height = qrSettings.size
-    
+
     img.onload = () => {
       ctx.fillStyle = qrSettings.bgColor
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       ctx.drawImage(img, 0, 0)
-      
+
       const link = document.createElement('a')
       link.download = `digital-signature-${formData.signerName || 'qr'}.png`
       link.href = canvas.toDataURL()
       link.click()
-      
+
       toast.success('Digital signature QR code downloaded!')
     }
-    
+
     img.src = 'data:image/svg+xml;base64,' + btoa(svgData)
   }
 

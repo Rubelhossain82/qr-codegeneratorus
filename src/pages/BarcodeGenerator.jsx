@@ -237,10 +237,18 @@ function BarcodeGenerator() {
   }
 
   const downloadBarcode = async (format = 'png') => {
+    // Check if user is logged in
+    if (!user) {
+      toast.error('Please login to download barcodes')
+      window.location.href = '/login'
+      return
+    }
+
     console.log('Download requested, format:', format)
     const canvas = canvasRef.current
     if (!canvas) {
       console.error('Canvas not available for download')
+      toast.error('Canvas not available for download')
       return
     }
 
@@ -251,12 +259,14 @@ function BarcodeGenerator() {
       link.href = canvas.toDataURL('image/png', 1.0)
       link.click()
       console.log('PNG download initiated')
+      toast.success('Barcode PNG downloaded successfully!')
 
       // Save to database
       await saveBarcodeGeneration(format)
     } else if (format === 'pdf') {
       console.log('Starting PDF download...')
       await downloadPDF()
+      toast.success('Barcode PDF downloaded successfully!')
 
       // Save to database
       await saveBarcodeGeneration(format)

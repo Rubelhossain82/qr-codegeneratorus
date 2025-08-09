@@ -118,11 +118,18 @@ function VCardGenerator() {
   }
 
   const downloadQR = () => {
+    // Check if user is logged in
+    if (!user) {
+      toast.error('Please login to download QR codes')
+      window.location.href = '/login'
+      return
+    }
+
     const svg = qrRef.current.querySelector('svg')
     const svgData = new XMLSerializer().serializeToString(svg)
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-    const img = new Image()
+    const img = document.createElement('img')
 
     canvas.width = qrSettings.size
     canvas.height = qrSettings.size
