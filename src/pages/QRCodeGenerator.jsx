@@ -25,7 +25,7 @@ function QRCodeGenerator() {
   const [logo, setLogo] = useState(defaultLogo) // Start with default logo
   const [logoUrl, setLogoUrl] = useState(null) // Cloudinary URL
   const [logoPosition, setLogoPosition] = useState('center')
-  const [logoSize, setLogoSize] = useState(12) // Percentage of QR code size
+  const [logoSize, setLogoSize] = useState(50) // Percentage of QR code size - default 50%
   const [qrCodeUrl, setQrCodeUrl] = useState('')
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [showBgColorPicker, setShowBgColorPicker] = useState(false)
@@ -40,9 +40,14 @@ function QRCodeGenerator() {
   const PREVIEW_SIZE = 300
 
   const generateQRCode = async () => {
-    if (!qrData?.trim()) return
+    if (!qrData?.trim()) {
+      setQrCodeUrl('')
+      return
+    }
 
     try {
+      console.log('Starting QR code generation...', { qrData, logo })
+
       // Step 1: Generate basic QR code
       const qrDataURL = await QRCode.toDataURL(qrData, {
         width: PREVIEW_SIZE,
@@ -52,54 +57,87 @@ function QRCodeGenerator() {
         errorCorrectionLevel: 'H'
       })
 
+      console.log('Basic QR code generated')
+
       // Step 2: If no logo, just show QR code
       if (!logo) {
+        console.log('No logo, showing basic QR code')
         setQrCodeUrl(qrDataURL)
         return
       }
 
-      // Step 3: Create canvas and add logo
+      console.log('Adding logo to QR code...', logo)
+
+      // Step 3: Create canvas and add logo with proper promise handling
       const canvas = document.createElement('canvas')
       canvas.width = PREVIEW_SIZE
       canvas.height = PREVIEW_SIZE
       const ctx = canvas.getContext('2d')
 
-      // Load QR code image
-      const qrImg = new Image()
-      qrImg.onload = () => {
+      // Use Promise-based approach for better error handling
+      const loadImage = (src) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image()
+          img.crossOrigin = 'anonymous' // Handle CORS for Cloudinary images
+          img.onload = () => resolve(img)
+          img.onerror = (error) => {
+            console.error('Image load error:', error)
+            reject(new Error(`Failed to load image: ${src}`))
+          }
+          img.src = src
+        })
+      }
+
+      try {
+        // Load QR code image
+        const qrImg = await loadImage(qrDataURL)
+        console.log('QR image loaded successfully')
+
         // Draw QR code
         ctx.drawImage(qrImg, 0, 0, PREVIEW_SIZE, PREVIEW_SIZE)
 
         // Load and draw logo
-        const logoImg = new Image()
-        logoImg.onload = () => {
-          // Calculate logo position (center)
-          const logoSize = (PREVIEW_SIZE * 20) / 100 // 20% of QR size
-          const x = (PREVIEW_SIZE - logoSize) / 2
-          const y = (PREVIEW_SIZE - logoSize) / 2
+        const logoImg = await loadImage(logo)
+        console.log('Logo image loaded successfully')
 
-          // Draw white background circle
-          const centerX = PREVIEW_SIZE / 2
-          const centerY = PREVIEW_SIZE / 2
-          const radius = logoSize / 2 + 10
+        // Calculate logo size - use dynamic logoSize state
+        const logoSizePixels = (PREVIEW_SIZE * logoSize) / 100 // Use logoSize state
+        const x = (PREVIEW_SIZE - logoSizePixels) / 2
+        const y = (PREVIEW_SIZE - logoSizePixels) / 2
 
-          ctx.fillStyle = bgColor
-          ctx.beginPath()
-          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-          ctx.fill()
+        // Draw white background circle for logo
+        const centerX = PREVIEW_SIZE / 2
+        const centerY = PREVIEW_SIZE / 2
+        const radius = logoSizePixels / 2 + 15 // Slightly larger padding
 
-          // Draw logo
-          ctx.drawImage(logoImg, x, y, logoSize, logoSize)
+        ctx.fillStyle = bgColor
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+        ctx.fill()
 
-          // Update preview
-          setQrCodeUrl(canvas.toDataURL('image/png'))
-        }
-        logoImg.src = logo
+        // Add border around logo background
+        ctx.strokeStyle = qrColor
+        ctx.lineWidth = 2
+        ctx.stroke()
+
+        // Draw logo
+        ctx.drawImage(logoImg, x, y, logoSizePixels, logoSizePixels)
+
+        // Update preview
+        const finalDataURL = canvas.toDataURL('image/png')
+        console.log('QR code with logo generated successfully')
+        setQrCodeUrl(finalDataURL)
+
+      } catch (logoError) {
+        console.error('Error adding logo to QR code:', logoError)
+        // Fallback to QR without logo
+        console.log('Falling back to QR code without logo')
+        setQrCodeUrl(qrDataURL)
       }
-      qrImg.src = qrDataURL
 
     } catch (error) {
-      console.error('QR generation failed:', error)
+      console.error('Error generating QR code:', error)
+      setQrCodeUrl('')
     }
   }
 
@@ -210,11 +248,16 @@ function QRCodeGenerator() {
 
   // Generate QR code when data changes
   useEffect(() => {
-    if (qrData?.trim()) {
-      generateQRCode()
-    } else {
-      setQrCodeUrl('')
-    }
+    const timer = setTimeout(() => {
+      if (qrData?.trim()) {
+        console.log('Triggering QR code generation from useEffect')
+        generateQRCode()
+      } else {
+        setQrCodeUrl('')
+      }
+    }, 100) // Small delay to prevent too frequent updates
+
+    return () => clearTimeout(timer)
   }, [qrData, qrColor, bgColor, logo, logoSize])
 
   // Initial QR code generation with default data and Cloudinary test
@@ -465,18 +508,22 @@ function QRCodeGenerator() {
                         uploadType="qr-logo"
                         currentImage={logo}
                         onUpload={(result) => {
+                          console.log('Logo upload result:', result)
                           // Use local URL immediately for instant preview
                           if (result.local_url) {
+                            console.log('Setting local logo URL:', result.local_url)
                             setLogo(result.local_url)
                           }
                           // Switch to Cloudinary URL when available
                           if (result.cloudinary_url) {
+                            console.log('Setting Cloudinary logo URL:', result.cloudinary_url)
                             setLogo(result.cloudinary_url)
                             setLogoUrl(result.cloudinary_url)
                           }
                         }}
                         onRemove={() => {
-                          setLogo(null)
+                          console.log('Removing logo')
+                          setLogo(defaultLogo) // Reset to default logo instead of null
                           setLogoUrl(null)
                         }}
                         maxSize={2}
@@ -507,15 +554,15 @@ function QRCodeGenerator() {
                           <input
                             id="logo-size"
                             type="range"
-                            min="8"
-                            max="25"
-                            step="2"
+                            min="20"
+                            max="70"
+                            step="5"
                             value={logoSize}
                             onChange={(e) => setLogoSize(parseInt(e.target.value))}
                           />
                           <div className="range-labels">
-                            <span>Small (8%)</span>
-                            <span>Large (25%)</span>
+                            <span>Small (20%)</span>
+                            <span>Large (70%)</span>
                           </div>
                         </div>
                       </>
@@ -692,12 +739,41 @@ function QRCodeGenerator() {
                         onLoad={() => console.log('QR preview image loaded successfully')}
                         onError={(e) => console.error('QR preview image failed to load:', e)}
                       />
-
+                      {logo && logo !== defaultLogo && (
+                        <div className="logo-indicator" style={{
+                          marginTop: '8px',
+                          padding: '4px 8px',
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          border: '1px solid rgba(59, 130, 246, 0.3)',
+                          borderRadius: '4px',
+                          fontSize: '12px',
+                          color: '#3B82F6',
+                          textAlign: 'center'
+                        }}>
+                          ✓ Custom logo included ({logoSize}%)
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="qr-loading">
                       <div className="spinner"></div>
                       <p>Generating QR code...</p>
+                      <button
+                        onClick={() => generateQRCode()}
+                        className="retry-btn"
+                        style={{
+                          marginTop: '10px',
+                          padding: '8px 16px',
+                          background: '#3B82F6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '14px'
+                        }}
+                      >
+                        Retry Generation
+                      </button>
                     </div>
                   )}
                 </div>
