@@ -59,14 +59,18 @@ function QRCodeGenerator() {
 
       console.log('Basic QR code generated')
 
-      // Step 2: If no logo, just show QR code
-      if (!logo) {
-        console.log('No logo, showing basic QR code')
+      // Step 2: If no logo or default logo, just show QR code
+      if (!logo || logo === defaultLogo) {
+        console.log('No custom logo, showing basic QR code')
         setQrCodeUrl(qrDataURL)
         return
       }
 
-      console.log('Adding logo to QR code...', logo)
+      console.log('Adding logo to QR code...', {
+        logo: logo?.substring(0, 100) + '...',
+        isDefault: logo === defaultLogo,
+        logoSize
+      })
 
       // Step 3: Create canvas and add logo with proper promise handling
       const canvas = document.createElement('canvas')
@@ -101,27 +105,52 @@ function QRCodeGenerator() {
         console.log('Logo image loaded successfully')
 
         // Calculate logo size - use dynamic logoSize state
-        const logoSizePixels = (PREVIEW_SIZE * logoSize) / 100 // Use logoSize state
+        const logoSizePixels = Math.min((PREVIEW_SIZE * logoSize) / 100, PREVIEW_SIZE * 0.6) // Max 60% to ensure QR readability
         const x = (PREVIEW_SIZE - logoSizePixels) / 2
         const y = (PREVIEW_SIZE - logoSizePixels) / 2
+
+        console.log('Logo positioning:', { logoSizePixels, x, y, logoSize })
 
         // Draw white background circle for logo
         const centerX = PREVIEW_SIZE / 2
         const centerY = PREVIEW_SIZE / 2
-        const radius = logoSizePixels / 2 + 15 // Slightly larger padding
+        const radius = logoSizePixels / 2 + 10 // Padding around logo
 
-        ctx.fillStyle = bgColor
+        // Create white background for logo
+        ctx.fillStyle = bgColor || '#ffffff'
         ctx.beginPath()
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
         ctx.fill()
 
-        // Add border around logo background
-        ctx.strokeStyle = qrColor
-        ctx.lineWidth = 2
+        // Add subtle border around logo background
+        ctx.strokeStyle = qrColor || '#000000'
+        ctx.lineWidth = 1
         ctx.stroke()
 
-        // Draw logo
+        // Draw logo with rounded corners
+        ctx.save()
+
+        // Create rounded rectangle clipping path for logo
+        const cornerRadius = logoSizePixels * 0.1 // 10% of logo size
+        ctx.beginPath()
+
+        // Manual rounded rectangle path (for better browser compatibility)
+        ctx.moveTo(x + cornerRadius, y)
+        ctx.lineTo(x + logoSizePixels - cornerRadius, y)
+        ctx.quadraticCurveTo(x + logoSizePixels, y, x + logoSizePixels, y + cornerRadius)
+        ctx.lineTo(x + logoSizePixels, y + logoSizePixels - cornerRadius)
+        ctx.quadraticCurveTo(x + logoSizePixels, y + logoSizePixels, x + logoSizePixels - cornerRadius, y + logoSizePixels)
+        ctx.lineTo(x + cornerRadius, y + logoSizePixels)
+        ctx.quadraticCurveTo(x, y + logoSizePixels, x, y + logoSizePixels - cornerRadius)
+        ctx.lineTo(x, y + cornerRadius)
+        ctx.quadraticCurveTo(x, y, x + cornerRadius, y)
+        ctx.closePath()
+        ctx.clip()
+
+        // Draw the logo
         ctx.drawImage(logoImg, x, y, logoSizePixels, logoSizePixels)
+
+        ctx.restore()
 
         // Update preview
         const finalDataURL = canvas.toDataURL('image/png')
@@ -250,7 +279,12 @@ function QRCodeGenerator() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (qrData?.trim()) {
-        console.log('Triggering QR code generation from useEffect')
+        console.log('Triggering QR code generation from useEffect', {
+          qrData: qrData?.substring(0, 50) + '...',
+          hasLogo: !!logo,
+          logoType: logo === defaultLogo ? 'default' : 'custom',
+          logoSize
+        })
         generateQRCode()
       } else {
         setQrCodeUrl('')
@@ -272,6 +306,11 @@ function QRCodeGenerator() {
       console.log('Setting default QR data')
       setQrData('https://example.com')
     }
+
+    // Make generateQRCode available globally for debugging
+    window.debugGenerateQR = generateQRCode
+    window.debugLogo = logo
+    window.debugLogoSize = logoSize
   }, [])
 
 
@@ -513,12 +552,16 @@ function QRCodeGenerator() {
                           if (result.local_url) {
                             console.log('Setting local logo URL:', result.local_url)
                             setLogo(result.local_url)
+                            // Force immediate QR regeneration
+                            setTimeout(() => generateQRCode(), 100)
                           }
                           // Switch to Cloudinary URL when available
                           if (result.cloudinary_url) {
                             console.log('Setting Cloudinary logo URL:', result.cloudinary_url)
                             setLogo(result.cloudinary_url)
                             setLogoUrl(result.cloudinary_url)
+                            // Force immediate QR regeneration
+                            setTimeout(() => generateQRCode(), 100)
                           }
                         }}
                         onRemove={() => {

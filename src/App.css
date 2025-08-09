@@ -1268,6 +1268,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  display: none;
+}
+span.logo-preview-text {
+    display: none;
 }
 
 .upload-buttons {
