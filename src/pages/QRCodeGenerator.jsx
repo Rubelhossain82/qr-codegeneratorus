@@ -81,14 +81,32 @@ function QRCodeGenerator() {
       // Use Promise-based approach for better error handling
       const loadImage = (src) => {
         return new Promise((resolve, reject) => {
-          const img = new Image()
-          img.crossOrigin = 'anonymous' // Handle CORS for Cloudinary images
-          img.onload = () => resolve(img)
-          img.onerror = (error) => {
-            console.error('Image load error:', error)
-            reject(new Error(`Failed to load image: ${src}`))
+          try {
+            const img = document.createElement('img')
+            img.crossOrigin = 'anonymous' // Handle CORS for Cloudinary images
+            img.onload = () => {
+              console.log('Image loaded successfully:', src.substring(0, 50) + '...')
+              console.log('Image dimensions:', img.width, 'x', img.height)
+              resolve(img)
+            }
+            img.onerror = (error) => {
+              console.error('Image load error:', error)
+              console.error('Failed image src:', src)
+              reject(new Error(`Failed to load image: ${src.substring(0, 100)}`))
+            }
+
+            // Add timeout for image loading
+            setTimeout(() => {
+              if (!img.complete) {
+                console.error('Image loading timeout for:', src.substring(0, 100))
+                reject(new Error('Image loading timeout'))
+              }
+            }, 10000) // 10 second timeout
+            img.src = src
+          } catch (error) {
+            console.error('Error creating image element:', error)
+            reject(error)
           }
-          img.src = src
         })
       }
 
@@ -159,6 +177,12 @@ function QRCodeGenerator() {
 
       } catch (logoError) {
         console.error('Error adding logo to QR code:', logoError)
+        console.error('Logo error details:', {
+          logoUrl: logo?.substring(0, 100),
+          logoSize,
+          errorMessage: logoError.message,
+          errorStack: logoError.stack
+        })
         // Fallback to QR without logo
         console.log('Falling back to QR code without logo')
         setQrCodeUrl(qrDataURL)
@@ -207,7 +231,7 @@ function QRCodeGenerator() {
       if (logo) {
         console.log('Adding logo to download QR code...')
         return new Promise((resolve, reject) => {
-          const logoImg = new Image()
+          const logoImg = document.createElement('img')
           logoImg.crossOrigin = 'anonymous' // Handle CORS issues
 
           logoImg.onload = () => {
@@ -309,8 +333,13 @@ function QRCodeGenerator() {
 
     // Make generateQRCode available globally for debugging
     window.debugGenerateQR = generateQRCode
-    window.debugLogo = logo
-    window.debugLogoSize = logoSize
+    window.debugLogo = () => console.log('Current logo:', logo)
+    window.debugLogoSize = () => console.log('Current logo size:', logoSize)
+    window.debugTestImage = () => {
+      const img = document.createElement('img')
+      console.log('Image element created successfully:', img)
+      return img
+    }
   }, [])
 
 
