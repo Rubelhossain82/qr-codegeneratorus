@@ -1,0 +1,12 @@
+# Netlify redirects for SPA routing
+# This ensures all routes are handled by React Router
+
+# Static assets should be served directly
+/assets/*    /assets/:splat    200
+/vite.svg    /vite.svg    200
+/qr-icon.svg    /qr-icon.svg    200
+/robots.txt    /robots.txt    200
+/sitemap.xml    /sitemap.xml    200
+
+# Handle all other routes by serving index.html (SPA fallback)
+/*    /index.html   200
