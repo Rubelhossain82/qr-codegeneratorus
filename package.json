@@ -17,6 +17,7 @@
     "jsbarcode": "^3.12.1",
     "jspdf": "^3.0.1",
     "lucide-react": "^0.526.0",
+    "qr-scanner": "^1.4.2",
     "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "^19.1.0",

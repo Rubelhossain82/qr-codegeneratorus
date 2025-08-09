@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { QrCode, BarChart3, Wifi, CreditCard, Package, Shield, Zap, Smartphone, Clock, Download, Users, Star, CheckCircle, Infinity, FileText } from 'lucide-react'
+import { QrCode, BarChart3, Wifi, CreditCard, Package, Shield, Zap, Smartphone, Clock, Download, Users, Star, CheckCircle, Infinity, FileText, Scan } from 'lucide-react'
 
 function HomePage() {
   const services = [
@@ -11,6 +11,15 @@ function HomePage() {
       path: '/qr-generator',
       status: 'available',
       color: 'from-blue-500 to-cyan-500'
+    },
+    {
+      id: 'qr-scanner',
+      title: 'QR Code Scanner',
+      description: 'Scan QR codes from images instantly',
+      icon: Scan,
+      path: '/qr-scanner',
+      status: 'available',
+      color: 'from-indigo-500 to-purple-500'
     },
     {
       id: 'barcode-generator',

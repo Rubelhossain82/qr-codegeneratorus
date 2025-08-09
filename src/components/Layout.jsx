@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { QrCode, Menu, X, User, LogIn, UserPlus, LogOut, Settings, ChevronDown, Search, Hash, Wifi, CreditCard, Package, Shield, BarChart3, Bell, UserCircle } from 'lucide-react'
+import { QrCode, Menu, X, User, LogIn, UserPlus, LogOut, Settings, ChevronDown, Search, Hash, Wifi, CreditCard, Package, Shield, BarChart3, Bell, UserCircle, Scan } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import useVisitorTracking from '../hooks/useVisitorTracking'
@@ -54,6 +54,12 @@ function Layout({ children }) {
       href: '/qr-generator',
       icon: QrCode,
       description: 'Generate QR codes for URLs, text, and more'
+    },
+    {
+      name: 'QR Code Scanner',
+      href: '/qr-scanner',
+      icon: Scan,
+      description: 'Scan QR codes from images instantly'
     },
     {
       name: 'Barcode Generator',

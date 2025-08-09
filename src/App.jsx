@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify'
 import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
 import QRCodeGenerator from './pages/QRCodeGenerator'
+import QRScanner from './pages/QRScanner'
 import BarcodeGenerator from './pages/BarcodeGenerator'
 import VCardGenerator from './pages/VCardGenerator'
 import WiFiGenerator from './pages/WiFiGenerator'
@@ -49,6 +50,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<Layout><HomePage /></Layout>} />
           <Route path="/qr-generator" element={<Layout><QRCodeGenerator /></Layout>} />
+          <Route path="/qr-scanner" element={<Layout><QRScanner /></Layout>} />
           <Route path="/barcode-generator" element={<Layout><BarcodeGenerator /></Layout>} />
           <Route path="/vcard-generator" element={<Layout><VCardGenerator /></Layout>} />
           <Route path="/wifi-generator" element={<Layout><WiFiGenerator /></Layout>} />
