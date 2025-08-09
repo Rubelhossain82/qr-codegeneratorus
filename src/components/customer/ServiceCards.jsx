@@ -7,7 +7,8 @@ import {
   Mail,
   MessageSquare,
   BarChart3,
-  ExternalLink
+  ExternalLink,
+  Scan
 } from 'lucide-react'
 import './ServiceCards.css'
 
@@ -20,6 +21,14 @@ const ServiceCards = () => {
       icon: QrCode,
       path: '/qr-generator',
       color: 'blue'
+    },
+    {
+      id: 'qr-scanner',
+      title: 'QR img Scanner',
+      description: 'Scan QR codes from images instantly',
+      icon: Scan,
+      path: '/qr-code-scanner-from-image',
+      color: 'indigo'
     },
     {
       id: 'url-qr',

@@ -14,10 +14,10 @@ function HomePage() {
     },
     {
       id: 'qr-scanner',
-      title: 'QR Code Scanner',
+      title: 'QR img Scanner',
       description: 'Scan QR codes from images instantly',
       icon: Scan,
-      path: '/qr-scanner',
+      path: '/qr-code-scanner-from-image',
       status: 'available',
       color: 'from-indigo-500 to-purple-500'
     },

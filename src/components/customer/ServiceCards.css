@@ -140,6 +140,11 @@
   color: white;
 }
 
+.service-card.indigo .service-card-icon {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+}
+
 .service-card.red .service-card-icon {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: white;

@@ -141,11 +141,10 @@ function QRScanner() {
         <div className="page-header">
           <div className="header-content">
             <h1 className="page-title">
-              <Scan className="title-icon" />
               QR Code Scanner From Image
             </h1>
             <p className="page-subtitle">
-              Upload an image containing a QR code and instantly decode its content. 
+              Upload an image containing a QR code and instantly decode its content.
               No registration required - scan QR codes from photos and screenshots.
             </p>
           </div>

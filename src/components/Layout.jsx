@@ -56,8 +56,8 @@ function Layout({ children }) {
       description: 'Generate QR codes for URLs, text, and more'
     },
     {
-      name: 'QR Code Scanner',
-      href: '/qr-scanner',
+      name: 'QR img Scanner',
+      href: '/qr-code-scanner-from-image',
       icon: Scan,
       description: 'Scan QR codes from images instantly'
     },
@@ -283,13 +283,16 @@ function Layout({ children }) {
                 </div>
               </nav>
 
-              {/* Red Announcement Box in Header */}
-              <div className="header-announcement">
-                <div className="announcement-content">
-                  <div className="scrolling-text">
-                    🎉 All tools 100% FREE • ⚡ No registration • 🚫 No watermarks • ♾️ No expiration • 🎯 Unlimited use • 📱 Mobile friendly • 🔒 Secure & private •
-                  </div>
-                </div>
+              {/* QR Scanner Quick Access */}
+              <div className="header-quick-access">
+                <Link
+                  to="/qr-code-scanner-from-image"
+                  className={`quick-access-btn ${location.pathname === '/qr-code-scanner-from-image' ? 'active' : ''}`}
+                  aria-current={location.pathname === '/qr-code-scanner-from-image' ? 'page' : undefined}
+                >
+                  <Scan size={18} />
+                  <span>QR img Scanner</span>
+                </Link>
               </div>
             </div>
 
@@ -582,14 +585,14 @@ function Layout({ children }) {
             </div>
 
             <div className="footer-center">
-              <h4 className="footer-section-title">QR Code Generators</h4>
+              <h4 className="footer-section-title">QR Code Tools</h4>
               <nav className="footer-links" role="navigation" aria-label="Footer navigation">
-                <Link to="/qr-generator" className="footer-link">Text QR Code</Link>
-                <Link to="/url-generator" className="footer-link">URL QR Code</Link>
+                <Link to="/qr-generator" className="footer-link">QR Code Generator</Link>
+                <Link to="/qr-code-scanner-from-image" className="footer-link">QR img Scanner</Link>
                 <Link to="/vcard-generator" className="footer-link">vCard QR Code</Link>
                 <Link to="/wifi-generator" className="footer-link">WiFi QR Code</Link>
-                <Link to="/email-generator" className="footer-link">Email QR Code</Link>
-                <Link to="/sms-generator" className="footer-link">SMS QR Code</Link>
+                <Link to="/barcode-generator" className="footer-link">Barcode Generator</Link>
+                <Link to="/product-serial-generator" className="footer-link">Product Serial QR</Link>
               </nav>
             </div>
 

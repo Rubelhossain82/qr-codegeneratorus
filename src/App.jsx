@@ -50,7 +50,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<Layout><HomePage /></Layout>} />
           <Route path="/qr-generator" element={<Layout><QRCodeGenerator /></Layout>} />
-          <Route path="/qr-scanner" element={<Layout><QRScanner /></Layout>} />
+          <Route path="/qr-code-scanner-from-image" element={<Layout><QRScanner /></Layout>} />
           <Route path="/barcode-generator" element={<Layout><BarcodeGenerator /></Layout>} />
           <Route path="/vcard-generator" element={<Layout><VCardGenerator /></Layout>} />
           <Route path="/wifi-generator" element={<Layout><WiFiGenerator /></Layout>} />
